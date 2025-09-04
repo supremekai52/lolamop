@@ -13,8 +13,16 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-	title: "Zen Kolam",
-	description: "Generate beautiful traditional South Indian geometric patterns",
+	title: "Zen Kolam - Complete Kolam Analyzer & Generator Platform",
+	description: "Analyze, generate, and learn about traditional South Indian kolam patterns. AI-powered analysis, mathematical algorithms, and cultural preservation.",
+	keywords: "kolam, rangoli, South Indian art, geometric patterns, mathematical art, cultural heritage, pattern analysis, AI",
+	authors: [{ name: "Rishi Balamurugan" }],
+	openGraph: {
+		title: "Zen Kolam Platform",
+		description: "Complete platform for kolam pattern analysis and generation",
+		type: "website",
+		locale: "en_US",
+	},
 };
 
 export default function RootLayout({

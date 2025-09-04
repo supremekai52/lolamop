@@ -8,33 +8,37 @@ export class KolamExporter {
 	static async exportAsSVG(pattern: KolamPattern): Promise<string> {
 		const { dimensions, dots, curves } = pattern;
 
-		let svgContent = `<svg width="${dimensions.width}" height="${dimensions.height}" viewBox="0 0 ${dimensions.width} ${dimensions.height}" xmlns="http://www.w3.org/2000/svg">`;
+		let svgContent = `<?xml version="1.0" encoding="UTF-8"?>
+<svg width="${dimensions.width}" height="${dimensions.height}" viewBox="0 0 ${dimensions.width} ${dimensions.height}" xmlns="http://www.w3.org/2000/svg" style="background-color: #92400e;">
+	<defs>
+		<style>
+			.kolam-curve { fill: none; stroke: #ffffff; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+			.kolam-dot { fill: #ffffff; }
+		</style>
+	</defs>`;
 
 		// Add dots
 		dots.forEach(dot => {
-			svgContent += `<circle cx="${dot.center.x}" cy="${dot.center.y}" r="${dot.radius || 3}" fill="${dot.filled ? (dot.color || 'white') : 'none'}" stroke="${dot.color || 'white'}" stroke-width="${dot.filled ? 0 : 1}" />`;
+			svgContent += `
+	<circle class="kolam-dot" cx="${dot.center.x}" cy="${dot.center.y}" r="${dot.radius || 3}" />`;
 		});
 
 		// Add curves
 		curves.forEach(curve => {
 			if (curve.curvePoints && curve.curvePoints.length > 1) {
-				// Generate SVG path for smooth curves
-				let pathData = `M ${curve.curvePoints[0].x} ${curve.curvePoints[0].y}`;
-				for (let i = 1; i < curve.curvePoints.length; i++) {
-					const point = curve.curvePoints[i];
-					const prevPoint = curve.curvePoints[i - 1];
-					const controlX = (prevPoint.x + point.x) / 2;
-					const controlY = (prevPoint.y + point.y) / 2;
-					pathData += ` Q ${controlX} ${controlY} ${point.x} ${point.y}`;
-				}
-				svgContent += `<path d="${pathData}" stroke="${curve.color || 'white'}" stroke-width="${curve.strokeWidth || 2}" fill="none" stroke-linecap="round" stroke-linejoin="round" />`;
+				// Use the SVG path generator
+				const pathData = require('@/utils/svgPathGenerator').generateSVGPath(curve.curvePoints);
+				svgContent += `
+	<path class="kolam-curve" d="${pathData}" />`;
 			} else {
 				// Fallback to simple line
-				svgContent += `<line x1="${curve.start.x}" y1="${curve.start.y}" x2="${curve.end.x}" y2="${curve.end.y}" stroke="${curve.color || 'white'}" stroke-width="${curve.strokeWidth || 2}" stroke-linecap="round" />`;
+				svgContent += `
+	<line class="kolam-curve" x1="${curve.start.x}" y1="${curve.start.y}" x2="${curve.end.x}" y2="${curve.end.y}" />`;
 			}
 		});
 
-		svgContent += '</svg>';
+		svgContent += `
+</svg>`;
 		return svgContent;
 	}
 

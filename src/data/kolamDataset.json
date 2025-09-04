@@ -1,0 +1,101 @@
+{
+  "description": "Authentic kolam patterns with cultural and mathematical metadata",
+  "version": "1.0.0",
+  "kolams": [
+    {
+      "id": "daily_7x7_square",
+      "name": "Daily Square Kolam",
+      "grid_size": 7,
+      "grid_type": "square",
+      "kolam_type": "pulli",
+      "region": "Tamil Nadu",
+      "occasion": "Daily practice",
+      "symmetry": "4-fold rotational",
+      "cultural_notes": "Simple daily kolam drawn with rice flour, represents prosperity and welcome",
+      "mathematical_concept": "Regular tessellation with rotational symmetry",
+      "difficulty": "beginner",
+      "patterns_used": [1, 3, 5, 7, 9],
+      "rule_set": {
+        "grid_size": 7,
+        "symmetry_type": "1D",
+        "base_patterns": [1, 3, 5, 7, 9]
+      }
+    },
+    {
+      "id": "festival_9x9_diamond",
+      "name": "Festival Diamond Kolam",
+      "grid_size": 9,
+      "grid_type": "diamond",
+      "kolam_type": "sikku",
+      "region": "Tamil Nadu",
+      "occasion": "Pongal festival",
+      "symmetry": "bilateral",
+      "cultural_notes": "Elaborate festival kolam with continuous lines, drawn during Pongal celebrations",
+      "mathematical_concept": "Eulerian path with bilateral symmetry",
+      "difficulty": "intermediate",
+      "patterns_used": [2, 4, 6, 8, 10, 12, 14, 16],
+      "rule_set": {
+        "grid_size": 9,
+        "symmetry_type": "1D",
+        "base_patterns": [2, 4, 6, 8, 10, 12, 14, 16]
+      }
+    },
+    {
+      "id": "temple_11x11_complex",
+      "name": "Temple Complex Kolam",
+      "grid_size": 11,
+      "grid_type": "square",
+      "kolam_type": "chuzhi",
+      "region": "Tamil Nadu",
+      "occasion": "Temple festivals",
+      "symmetry": "4-fold rotational",
+      "cultural_notes": "Complex temple kolam combining dots and continuous lines, represents cosmic order",
+      "mathematical_concept": "Graph theory with Hamiltonian paths and rotational symmetry",
+      "difficulty": "advanced",
+      "patterns_used": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16],
+      "rule_set": {
+        "grid_size": 11,
+        "symmetry_type": "2D",
+        "base_patterns": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16]
+      }
+    },
+    {
+      "id": "rangoli_5x5_simple",
+      "name": "Simple Rangoli Pattern",
+      "grid_size": 5,
+      "grid_type": "square",
+      "kolam_type": "pulli",
+      "region": "Karnataka",
+      "occasion": "Daily practice",
+      "symmetry": "bilateral",
+      "cultural_notes": "North Karnataka style rangoli with emphasis on dot patterns",
+      "mathematical_concept": "Simple grid symmetry with dot-based tessellation",
+      "difficulty": "beginner",
+      "patterns_used": [1, 5, 10],
+      "rule_set": {
+        "grid_size": 5,
+        "symmetry_type": "1D",
+        "base_patterns": [1, 5, 10]
+      }
+    },
+    {
+      "id": "wedding_13x13_elaborate",
+      "name": "Wedding Elaborate Kolam",
+      "grid_size": 13,
+      "grid_type": "diamond",
+      "kolam_type": "sikku",
+      "region": "Tamil Nadu",
+      "occasion": "Wedding ceremonies",
+      "symmetry": "4-fold rotational",
+      "cultural_notes": "Elaborate wedding kolam with intricate patterns, symbolizes union and prosperity",
+      "mathematical_concept": "Complex graph with multiple Eulerian cycles and 4-fold symmetry",
+      "difficulty": "expert",
+      "patterns_used": [1, 3, 6, 9, 12, 15, 16],
+      "rule_set": {
+        "grid_size": 13,
+        "symmetry_type": "2D",
+        "base_patterns": [1, 3, 6, 9, 12, 15, 16]
+      }
+    }
+  ]
+}

@@ -1,19 +1,44 @@
 {
-  "name": "zen_kolam",
+  "name": "zen-kolam-platform",
   "version": "0.1.0",
   "private": true,
+  "description": "Complete platform for analyzing, generating, and learning about traditional South Indian kolam patterns",
+  "keywords": [
+    "kolam",
+    "rangoli",
+    "geometric-patterns",
+    "cultural-heritage",
+    "mathematical-art",
+    "computer-vision"
+  ],
+  "author": "Rishi Balamurugan",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/crazzygamerr/zen-kolam"
+  },
   "scripts": {
     "dev": "next dev --turbopack",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "backend": "cd backend && python start.py",
+    "full-dev": "concurrently \"pnpm dev\" \"pnpm backend\""
   },
   "dependencies": {
+    "@headlessui/react": "^2.2.7",
+    "@types/multer": "^2.0.0",
+    "axios": "^1.11.0",
+    "clsx": "^2.1.1",
+    "framer-motion": "^12.23.12",
     "gif.js": "^0.2.0",
     "html2canvas-pro": "^1.5.11",
+    "lucide-react": "^0.542.0",
+    "multer": "^2.0.2",
     "next": "15.4.2",
     "react": "19.1.0",
-    "react-dom": "19.1.0"
+    "react-dom": "19.1.0",
+    "react-dropzone": "^14.3.8",
+    "tailwind-merge": "^3.3.1"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",
@@ -22,6 +47,7 @@
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+    "concurrently": "^9.2.1",
     "eslint": "^9",
     "eslint-config-next": "15.4.2",
     "tailwindcss": "^4",
