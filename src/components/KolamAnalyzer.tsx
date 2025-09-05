@@ -4,6 +4,7 @@ import React, { useState, useCallback } from 'react';
 import { useDropzone } from 'react-dropzone';
 import { Upload, FileImage, Loader2, CheckCircle, XCircle, Info } from 'lucide-react';
 
+// Mock analysis for when backend is not available
 interface AnalysisResult {
   success: boolean;
   analysis: {
@@ -53,6 +54,7 @@ export const KolamAnalyzer: React.FC = () => {
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [isReconstructing, setIsReconstructing] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [backendAvailable, setBackendAvailable] = useState<boolean | null>(null);
 
   const onDrop = useCallback(async (acceptedFiles: File[]) => {
     const file = acceptedFiles[0];
@@ -74,11 +76,64 @@ export const KolamAnalyzer: React.FC = () => {
     await analyzeKolam(file);
   }, []);
 
+  const checkBackendHealth = async (): Promise<boolean> => {
+    try {
+      const response = await fetch('http://localhost:8000/', {
+        method: 'GET',
+        signal: AbortSignal.timeout(3000) // 3 second timeout
+      });
+      return response.ok;
+    } catch (error) {
+      return false;
+    }
+  };
+
+  const generateMockAnalysis = (file: File): AnalysisResult => {
+    // Generate a realistic mock analysis based on filename or random values
+    const mockTypes = ['pulli', 'sikku', 'chuzhi'];
+    const mockSymmetries = ['4-fold rotational', 'bilateral', 'horizontal', 'vertical', 'asymmetric'];
+    const mockGridSizes = [5, 7, 9, 11];
+    
+    const randomType = mockTypes[Math.floor(Math.random() * mockTypes.length)];
+    const randomSymmetry = mockSymmetries[Math.floor(Math.random() * mockSymmetries.length)];
+    const randomSize = mockGridSizes[Math.floor(Math.random() * mockGridSizes.length)];
+    
+    return {
+      success: true,
+      analysis: {
+        grid: `${randomSize}x${randomSize} square`,
+        kolam_type: randomType,
+        symmetry: {
+          type: randomSymmetry,
+          details: { horizontal: true, vertical: true, rotational_90: false, four_fold: false }
+        },
+        curves_used: [1, 3, 7, 12, 15],
+        connected: true,
+        dots_detected: randomSize * randomSize,
+        curves_detected: Math.floor(Math.random() * 10) + 5,
+        estimated_size: randomSize,
+        cultural_notes: `Mock analysis: This appears to be a traditional ${randomType} kolam with ${randomSymmetry} symmetry. Backend analysis not available.`
+      }
+    };
+  };
+
   const analyzeKolam = async (file: File) => {
     setIsAnalyzing(true);
     setError(null);
 
     try {
+      // Check if backend is available
+      const isBackendUp = await checkBackendHealth();
+      setBackendAvailable(isBackendUp);
+      
+      if (!isBackendUp) {
+        // Use mock analysis when backend is not available
+        const mockResult = generateMockAnalysis(file);
+        setAnalysisResult(mockResult);
+        setError('Backend not available - showing mock analysis. Start the Python backend for real AI analysis.');
+        return;
+      }
+
       const formData = new FormData();
       formData.append('file', file);
 
@@ -93,14 +148,19 @@ export const KolamAnalyzer: React.FC = () => {
 
       const result: AnalysisResult = await response.json();
       setAnalysisResult(result);
+      setBackendAvailable(true);
 
       // Also reconstruct the kolam
       await reconstructKolam(file);
 
     } catch (err) {
+      // Fallback to mock analysis on any error
+      const mockResult = generateMockAnalysis(file);
+      setAnalysisResult(mockResult);
       const errorMessage = err instanceof Error ? err.message : 'Analysis failed';
-      setError(errorMessage);
+      setError(`Backend connection failed: ${errorMessage}. Showing mock analysis instead.`);
       console.error('Analysis error:', err);
+      setBackendAvailable(false);
     } finally {
       setIsAnalyzing(false);
     }
@@ -110,6 +170,11 @@ export const KolamAnalyzer: React.FC = () => {
     setIsReconstructing(true);
 
     try {
+      // Skip reconstruction if backend is not available
+      if (backendAvailable === false) {
+        return;
+      }
+
       const formData = new FormData();
       formData.append('file', file);
 
@@ -192,8 +257,8 @@ export const KolamAnalyzer: React.FC = () => {
 
         {error && (
           <div className="mt-4 p-4 bg-red-50 border border-red-200 rounded-lg flex items-center">
-            <XCircle className="h-5 w-5 text-red-500 mr-2" />
-            <span className="text-red-700">{error}</span>
+            <Info className="h-5 w-5 text-amber-500 mr-2" />
+            <span className="text-amber-700">{error}</span>
           </div>
         )}
       </div>
@@ -381,13 +446,47 @@ export const KolamAnalyzer: React.FC = () => {
       )}
 
       {/* Backend Status */}
-      <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+      <div className={`border rounded-lg p-4 ${
+        backendAvailable === true 
+          ? 'bg-green-50 border-green-200' 
+          : backendAvailable === false 
+          ? 'bg-amber-50 border-amber-200' 
+          : 'bg-blue-50 border-blue-200'
+      }`}>
         <div className="flex items-center">
-          <Info className="h-5 w-5 text-blue-500 mr-2" />
+          {backendAvailable === true ? (
+            <CheckCircle className="h-5 w-5 text-green-500 mr-2" />
+          ) : backendAvailable === false ? (
+            <XCircle className="h-5 w-5 text-amber-500 mr-2" />
+          ) : (
+            <Info className="h-5 w-5 text-blue-500 mr-2" />
+          )}
           <div>
-            <p className="text-blue-800 font-medium">Backend Required</p>
-            <p className="text-blue-700 text-sm">
-              To use the analyzer, start the Python backend: <code className="bg-blue-100 px-1 rounded">cd backend && python start.py</code>
+            <p className={`font-medium ${
+              backendAvailable === true 
+                ? 'text-green-800' 
+                : backendAvailable === false 
+                ? 'text-amber-800' 
+                : 'text-blue-800'
+            }`}>
+              {backendAvailable === true 
+                ? 'Backend Connected' 
+                : backendAvailable === false 
+                ? 'Backend Offline - Using Mock Analysis' 
+                : 'Backend Status Unknown'}
+            </p>
+            <p className={`text-sm ${
+              backendAvailable === true 
+                ? 'text-green-700' 
+                : backendAvailable === false 
+                ? 'text-amber-700' 
+                : 'text-blue-700'
+            }`}>
+              {backendAvailable === true 
+                ? 'AI-powered analysis is available with full computer vision capabilities.' 
+                : backendAvailable === false 
+                ? 'Start the Python backend for real AI analysis: cd backend && python start.py' 
+                : 'To use full AI analysis, start the Python backend: cd backend && python start.py'}
             </p>
           </div>
         </div>
